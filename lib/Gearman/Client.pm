@@ -245,7 +245,15 @@ sub get_job_server_status {
         "status\n",
         sub {
             my ($js, $line) = @_;
-            unless ($line =~ /^(\S+)\s+(\d+)\s+(\d+)\s+(\d+)$/) {
+
+            my $re = length $self->prefix
+               # depends on design preference
+                ? qr/^(\Q@{[ $self->prefix ]}@{[ $self->prefix_separator ]}\E.+)\t(\d+)\t(\d+)\t(\d+)$/
+               #? qr/^\Q@{[ $self->prefix ]}@{[ $self->prefix_separator ]}\E(.+)\t(\d+)\t(\d+)\t(\d+)$/
+               #? qr/^\Q@{[ $self->prefix ]}@{[ $self->prefix_separator ]}\E(.*)\t(\d+)\t(\d+)\t(\d+)$/
+                : qr/^(.+)\t(\d+)\t(\d+)\t(\d+)$/;
+
+            unless ($line =~ $re) {
                 return;
             }
 
